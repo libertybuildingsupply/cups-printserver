@@ -6,6 +6,7 @@
 $PrinterName = "NEW-PRINTER-NAME"           # MUST match your CUPS queue name
 $CupsServer  = "192.168.2.6"          # Your CUPS server IP
 $CupsPort    = 631                     # Standard IPP port
+$DisableWSD  = $false                  # Set to $true if WSD causes issues
 
 # ==========================
 # DO NOT EDIT BELOW THIS LINE
@@ -17,10 +18,15 @@ Write-Host "`n=== Starting IPP Printer Installation ===" -ForegroundColor Cyan
 Write-Host "Printer Name: $PrinterName" -ForegroundColor Yellow
 Write-Host "IPP URL: $IppUrl`n" -ForegroundColor Yellow
 
-# 1. Disable WSD services (prevents auto-discovery interference)
-Write-Host "[1/7] Disabling WSD services..." -ForegroundColor Green
-Stop-Service fdPHost, FDResPub -Force -ErrorAction SilentlyContinue
-Set-Service fdPHost, FDResPub -StartupType Disabled -ErrorAction SilentlyContinue
+# 1. Disable WSD services (optional - only if causing issues)
+if ($DisableWSD) {
+    Write-Host "[1/7] Disabling WSD services..." -ForegroundColor Green
+    @('fdPHost', 'FDResPub') | ForEach-Object {
+        Set-Service -Name $_ -StartupType Disabled -ErrorAction SilentlyContinue
+    }
+} else {
+    Write-Host "[1/7] Skipping WSD service disable (WSD enabled for compatibility)..." -ForegroundColor Yellow
+}
 
 # 2. Restart Print Spooler (clears any stuck jobs/states)
 Write-Host "[2/7] Restarting Print Spooler service..." -ForegroundColor Green
