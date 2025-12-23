@@ -3,7 +3,7 @@
 # CHANGE ONLY THESE VALUES:
 # ==========================
 
-$PrinterName = "SETH-CANON"           # MUST match your CUPS queue name
+$PrinterName = "NEW-PRINTER-NAME"           # MUST match your CUPS queue name
 $CupsServer  = "192.168.2.6"          # Your CUPS server IP
 $CupsPort    = 631                     # Standard IPP port
 
